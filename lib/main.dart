@@ -12,10 +12,12 @@ import 'providers/favorite/local_database_provider.dart';
 import 'providers/home/restaurant_list_provider.dart';
 import 'providers/main/index_nav_provider.dart';
 import 'providers/search/restaurant_search_provider.dart';
+import 'providers/theme/app_theme_provider.dart';
 import 'ui/detail/pages/detail_page.dart';
 import 'ui/main/pages/main_pages.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MultiProvider(
       providers: [
@@ -51,6 +53,9 @@ void main() {
             context.read<LocalDatabaseService>(),
           ),
         ),
+        ChangeNotifierProvider(
+          create: (context) => AppThemeProvider()..loadTheme(),
+        ),
       ],
       child: const MyApp(),
     ),
@@ -63,18 +68,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // Retrieves the default theme for the platform
-    //TextTheme textTheme = Theme.of(context).textTheme;
-
-    // Use with Google Fonts package to use downloadable fonts
     TextTheme textTheme = createTextTheme(context, "Poppins", "Poppins");
-
     MaterialTheme theme = MaterialTheme(textTheme);
+
+    final themeProvider = context.watch<AppThemeProvider>();
     return MaterialApp(
       title: 'Flutter Demo',
       theme: theme.light(),
       darkTheme: theme.dark(),
-      themeMode: ThemeMode.system,
+      themeMode: themeProvider.themeMode,
       initialRoute: NavigationRoute.mainRoute.name,
       routes: {
         NavigationRoute.mainRoute.name: (context) => const MainPage(),

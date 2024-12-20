@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/components/message_widget.dart';
@@ -10,6 +11,7 @@ import '../../../core/static/navigation_route.dart';
 import '../../../core/static/restaurant_list_result_state.dart';
 import '../../../providers/home/restaurant_list_provider.dart';
 import '../../../providers/main/index_nav_provider.dart';
+import '../../../providers/theme/app_theme_provider.dart';
 import '../components/carousal_banner_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -48,14 +50,27 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-            ),
-            child: Image.asset(
-              'assets/images/avatar.png',
-              width: 36.0,
-            ),
+          Consumer<AppThemeProvider>(
+            builder: (context, themeProvider, child) {
+              final isDark = themeProvider.themeMode == ThemeMode.dark;
+
+              return IconButton(
+                icon: SvgPicture.asset(
+                  themeProvider.themeMode == ThemeMode.dark
+                      ? 'assets/icons/ic_light.svg'
+                      : 'assets/icons/ic_dark.svg',
+                  colorFilter: ColorFilter.mode(
+                    isDark ? Colors.white : Colors.black,
+                    BlendMode.srcIn,
+                  ),
+                  width: 19.0,
+                  height: 19.0,
+                ),
+                onPressed: () {
+                  themeProvider.toggleTheme();
+                },
+              );
+            },
           ),
         ],
       ),
@@ -161,11 +176,11 @@ class _HomePageState extends State<HomePage> {
                   textAlign: TextAlign.center,
                 ),
               ),
-      RestaurantListErrorState(error: var message) => Padding(
+      RestaurantListErrorState() => const Padding(
           padding: EdgeInsets.all(16.0),
           child: Message(
             title: 'Oops, something went wrong!',
-            subtitle: message,
+            subtitle: 'Please check your internet connection',
           ),
         ),
       _ => const SizedBox(),
