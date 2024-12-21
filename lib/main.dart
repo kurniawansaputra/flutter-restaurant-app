@@ -11,8 +11,10 @@ import 'providers/detail/restaurant_detail_provider.dart';
 import 'providers/favorite/local_database_provider.dart';
 import 'providers/home/restaurant_list_provider.dart';
 import 'providers/main/index_nav_provider.dart';
+import 'providers/notification/local_notification_provider.dart';
 import 'providers/search/restaurant_search_provider.dart';
 import 'providers/theme/app_theme_provider.dart';
+import 'services/local_notification_service.dart';
 import 'ui/detail/pages/detail_page.dart';
 import 'ui/main/pages/main_pages.dart';
 
@@ -55,6 +57,16 @@ void main() {
         ),
         ChangeNotifierProvider(
           create: (context) => AppThemeProvider()..loadTheme(),
+        ),
+        Provider(
+          create: (context) => LocalNotificationService()
+            ..init()
+            ..configureLocalTimeZone(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => LocalNotificationProvider(
+            context.read<LocalNotificationService>(),
+          )..requestPermissions(),
         ),
       ],
       child: const MyApp(),
